@@ -50,13 +50,13 @@ scenarios %>%
 true.prev <- seq(0, 0.5, by=0.025)
 output.mat1 <- matrix(ncol=nrow(scenarios)+2, nrow=length(true.prev))
 output.mat1[,1] <- true.prev
-colnames(output.mat1) <- c("true.prev", "Unadjusted", "1", "2", "3")
+colnames(output.mat1) <- c("true.prev", "Uncorrected", "1", "2", "3")
 
 for(i in 1:nrow(scenarios)) {
 	
 	for(j in 1:nrow(output.mat1)) {
 		
-		## Simulate observed prevalence (unadjusted)
+		## Simulate observed prevalence (uncorrected)
 		prev.sim <- sim.prev_symptoms(
 			Se.asx=Se.asx,
 			Se.mild=Se.mild,
@@ -77,7 +77,7 @@ for(i in 1:nrow(scenarios)) {
 			v.mild=scenarios$prop.mild[i],
 			v.severe=scenarios$prop.severe[i])
 		
-		## Calculate adjusted prevalence
+		## Calculate corrected prevalence
 		adjust.prev <- adj.func(prev.obs=prev.sim, Se=Se.wtd, Sp=1)
 		output.mat1[j,i+2] <- adjust.prev
 		
@@ -88,7 +88,7 @@ for(i in 1:nrow(scenarios)) {
 output.mat1 %>%
 	as.data.frame() %>%
 	gather(which_scenario, measured.prev, Unadjusted:`3`) %>%
-	mutate(which_scenario = factor(which_scenario, levels=c("1", "2", "3", "Unadjusted"))) -> data_plot_sims
+	mutate(which_scenario = factor(which_scenario, levels=c("1", "2", "3", "Uncorrected"))) -> data_plot_sims
 
 data_plot_sims %>%
 	filter(true.prev>0) %>%
@@ -100,16 +100,16 @@ data_plot_sims %>%
 
 data_plot_sims %>%
 	ggplot() +
-		geom_abline(intercept=0, slope=data_plot_sims_points$ratio[1], colour=colors_for_scenarios[1], size=0.7) +
-		geom_abline(intercept=0, slope=data_plot_sims_points$ratio[2], colour=colors_for_scenarios[2], size=0.7) +
-		geom_abline(intercept=0, slope=data_plot_sims_points$ratio[3], colour=colors_for_scenarios[3], size=0.7) +
-		geom_abline(intercept=0, slope=data_plot_sims_points$ratio[4], colour=colors_for_scenarios[4], size=0.7) +
+		geom_segment(aes(x=0, y=0, xend=max(true.prev), yend=max(true.prev)*data_plot_sims_points$ratio[1]), colour=colors_for_scenarios[1], size=0.7) +
+		geom_segment(aes(x=0, y=0, xend=max(true.prev), yend=max(true.prev)*data_plot_sims_points$ratio[2]), colour=colors_for_scenarios[2], size=0.7) +
+		geom_segment(aes(x=0, y=0, xend=max(true.prev), yend=max(true.prev)*data_plot_sims_points$ratio[3]), colour=colors_for_scenarios[3], size=0.7) +
+		geom_segment(aes(x=0, y=0, xend=max(true.prev), yend=max(true.prev)*data_plot_sims_points$ratio[4]), colour=colors_for_scenarios[4], size=0.7) +
 		geom_point(aes(x=true.prev, y=measured.prev, group=which_scenario, shape=which_scenario), size=1.5) +
 		xlab("True prevalence") +
-		ylab("Adjusted measured prevalence") +
+		ylab("Measured prevalence") +
 		theme_bw() +
 		guides(shape=guide_legend(override.aes=list(size=2))) +
-		labs(shape="Assay\nvalidation\ncontrols") +
+		labs(shape="Validation\nset used for\ncorrection") +
 		annotate(geom="text", x=0.0, y=0.5, label=paste0("Se in severe: ", sprintf(Se.severe, fmt='%#.2f')), size=4, hjust=0) +
 		annotate(geom="text", x=0.0, y=0.475, label=paste0("Se in mild: ", sprintf(Se.mild, fmt='%#.2f')), size=4, hjust=0) +
 		annotate(geom="text", x=0.0, y=0.45, label=paste0("Se in asymptomatic: ", sprintf(Se.asx, fmt='%#.2f')), size=4, hjust=0) +
@@ -137,7 +137,7 @@ colnames(output.mat2) <- c("Se.mild_to_sweep", "scenarios_to_sweep", "true.prev.
 
 for(j in 1:nrow(output.mat2)) {
 	
-	## Simulate observed prevalence (unadjusted)
+	## Simulate observed prevalence (uncorrected)
 	prev.sim <- sim.prev_symptoms(
 		Se.asx=output.mat2[j,"Se.mild_to_sweep"]*Se_asx_to_Se_mild_ratio,
 		Se.mild=output.mat2[j,"Se.mild_to_sweep"],
@@ -157,7 +157,7 @@ for(j in 1:nrow(output.mat2)) {
 		v.mild=scenarios$prop.mild[output.mat2[j,"scenarios_to_sweep"]],
 		v.severe=scenarios$prop.severe[output.mat2[j,"scenarios_to_sweep"]])
 	
-	## Calculated adjusted prevalence
+	## Calculated corrected prevalence
 	adjust.prev <- adj.func(prev.obs=prev.sim, Se=Se.wtd, Sp=1)
 	output.mat2[j,"adjust.prev"] <- adjust.prev
 	
@@ -182,7 +182,7 @@ data_plot_sweep %>%
 		geom_point(aes(x=as.numeric(Se.mild_to_sweep), y=as.numeric(ratio), group=which_scenario, shape=which_scenario), size=1.5) +
 		geom_point(data=data_plot_sweep_single, aes(x=Se.mild_to_sweep, y=ratio, colour=color), shape=1, size=4, stroke=1.2) +
 		xlab("Sensitivity in mild") +
-		ylab("Ratio, adjusted measured to true prevalence") +
+		ylab("Ratio, measured to true prevalence") +
 		theme_bw() +
 		scale_x_continuous(breaks=seq(0.2,1,by=0.1), limits=c(0.2,1.001)) +
 		scale_y_continuous(breaks=seq(0.2,1,by=0.1), limits=c(0.2,1.001)) +
