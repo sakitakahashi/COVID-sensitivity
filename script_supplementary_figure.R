@@ -237,7 +237,7 @@ data_plot_sims_TSI %>%
 	ggplot() +
 		geom_point(aes(x=true.prev, y=measured.prev, group=which_scenario, shape=which_scenario), size=2) +
 		xlab("True prevalence") +
-		ylab("Adjusted measured prevalence") +
+		ylab("Measured prevalence") +
 		theme_bw() +
 		scale_shape_manual(name="Time point in\nthe epidemic", breaks=c(paste0("Day ", N1), paste0("Day ", N2), paste0("Day ", N3), paste0("Day ", N2, " & clinical spectrum")), labels=c(paste0("Day ", N1), paste0("Day ", N2), paste0("Day ", N3), paste0("Day ", N2, " &\nclinical spectrum")), values=c(1,0,2,7)) +
 		guides(shape=guide_legend(override.aes=list(size=2), nrow=2, byrow=TRUE)) +
