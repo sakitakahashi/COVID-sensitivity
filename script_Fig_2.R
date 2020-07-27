@@ -75,12 +75,10 @@ SEIR.output %>%
 		geom_text_repel(data=SEIR.output.highlight, aes(x=time, y=E/N_fix, label=which_scenario), size=4.5, segment.colour=NA, box.padding=1) +
 		xlab("Time (days)") +
 		ylab("Proportion infected") +
-		theme_classic() +
+		theme_classic(base_size=16) +
 		theme(
 			legend.position="none",
-			panel.grid.minor=element_blank(),
-			axis.text=element_text(size=12),
-			axis.title=element_text(size=12)) -> plot_SEIR
+			panel.grid.minor=element_blank()) -> plot_SEIR
 
 ## [S2] Generate scenarios for the epidemic timing (TSI = time since infection)
 data.frame(which_scenario=paste0("Day ", N1), prop.1=1, prop.2=0, prop.3=0) %>%
@@ -102,13 +100,8 @@ scenarios_TSI_controls %>%
 	xlab("Time point in the epidemic") +
 	ylab("Proportion") +
 	guides(fill=guide_legend(override.aes=list(size=2), nrow=3)) +
-	theme_classic() +
-	theme(
-		legend.position="top",
-		axis.text=element_text(size=12),
-		axis.title=element_text(size=12),
-		legend.title=element_text(size=12),
-		legend.text=element_text(size=12)) -> plot_scenarios_TSI
+	theme_classic(base_size=16) +
+	theme(legend.position="top") -> plot_scenarios_TSI
 
 ## [S3] Simulations over a range of true prevalence
 true.prev <- seq(0, 0.5, by=0.025)
@@ -237,24 +230,20 @@ data_plot_sims_TSI %>%
 	ggplot() +
 		geom_point(aes(x=true.prev, y=measured.prev, group=which_scenario, shape=which_scenario), size=2) +
 		xlab("True prevalence") +
-		ylab("Measured prevalence") +
-		theme_bw() +
+		ylab("Estimated prevalence") +
+		theme_bw(base_size=16) +
 		scale_shape_manual(name="Time point in\nthe epidemic", breaks=c(paste0("Day ", N1), paste0("Day ", N2), paste0("Day ", N3), paste0("Day ", N2, " & clinical spectrum")), labels=c(paste0("Day ", N1), paste0("Day ", N2), paste0("Day ", N3), paste0("Day ", N2, " &\nclinical spectrum")), values=c(1,0,2,7)) +
 		guides(shape=guide_legend(override.aes=list(size=2), nrow=2, byrow=TRUE)) +
-		annotate(geom="text", x=0.0, y=0.5, label=paste0("Se, ", "0-", VERY_RECENT, " days: x ", sprintf(1, fmt='%#.2f')), size=4, hjust=0) +
-		annotate(geom="text", x=0.0, y=0.475, label=paste0("Se, ", VERY_RECENT, "-", RECENT, " days: x ", sprintf(mult.Se.2, fmt='%#.2f')), size=4, hjust=0) +
-		annotate(geom="text", x=0.0, y=0.45, label=paste0("Se, ", RECENT, "+ days: x ", sprintf(mult.Se.3, fmt='%#.2f')), size=4, hjust=0) +
+		annotate(geom="text", x=0.5, y=0.062, label=paste0("Se, ", "0-", VERY_RECENT, " days: x ", sprintf(1, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
+		annotate(geom="text", x=0.5, y=0.031, label=paste0("Se, ", VERY_RECENT, "-", RECENT, " days: x ", sprintf(mult.Se.2, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
+		annotate(geom="text", x=0.5, y=0, label=paste0("Se, ", RECENT, "+ days: x ", sprintf(mult.Se.3, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
 		theme(
 			aspect.ratio=1,
 			legend.position="top",
 			legend.title.align=0.5,
-			panel.grid.minor=element_blank(),
-			axis.text=element_text(size=12),
-			axis.title=element_text(size=12),
-			legend.text=element_text(size=12),
-			legend.title=element_text(size=12)) -> plot_sims_TSI
+			panel.grid.minor=element_blank()) -> plot_sims_TSI
 
 ## Plot them together
-plot_all_supplementary <- plot_SEIR + plot_scenarios_TSI + plot_sims_TSI + plot_layout(ncol=3) + plot_annotation(tag_levels='A')
+plot_all_supplementary <- plot_SEIR + plot_scenarios_TSI + plot_sims_TSI + plot_layout(ncol=3) + plot_annotation(tag_levels='A', theme=theme(plot.title=element_text(size=20)))
 
-# ggsave(paste0("supplementary_figure.pdf"), plot_all_supplementary, width=35, height=20, units="cm")
+# ggsave(paste0("fig_2.pdf"), plot_all_supplementary, width=35, height=20, units="cm")
