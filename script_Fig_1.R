@@ -191,4 +191,4 @@ data_plot_sweep %>%
 ## Plot them together
 plot_all_main <- plot_scenarios + plot_sims + plot_sweep + plot_layout(ncol=3) + plot_annotation(tag_levels='A', theme=theme(plot.title=element_text(size=20)))
 
-# ggsave("main_figure.pdf", plot_all_main, width=35, height=20, units="cm")
+# ggsave("fig_1.pdf", plot_all_main, width=35, height=20, units="cm")
