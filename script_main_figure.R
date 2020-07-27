@@ -83,7 +83,7 @@ for(i in 1:nrow(scenarios)) {
 
 output.mat1 %>%
 	as.data.frame() %>%
-	gather(which_scenario, measured.prev, Unadjusted:`3`) %>%
+	gather(which_scenario, measured.prev, Uncorrected:`3`) %>%
 	mutate(which_scenario = factor(which_scenario, levels=c("1", "2", "3", "Uncorrected"))) -> data_plot_sims
 
 data_plot_sims %>%
