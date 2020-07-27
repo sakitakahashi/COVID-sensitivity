@@ -39,12 +39,8 @@ scenarios %>%
 	scale_fill_manual(name="", breaks=c("prop.asx", "prop.mild", "prop.severe"), labels=c("Asymptomatic", "Mild", "Severe"), values=c("#97BAFC", "#EDFCCA", "#FDBCB1")) +
 	xlab("Assay validation controls") +
 	ylab("Proportion") +
-	theme_classic() +
-	theme(
-		legend.position="top",
-		axis.text=element_text(size=12),
-		axis.title=element_text(size=12),
-		legend.text=element_text(size=12)) -> plot_scenarios
+	theme_classic(base_size=16) +
+	theme(legend.position="top") -> plot_scenarios
 
 ## [2] Simulations over a range of true prevalence
 true.prev <- seq(0, 0.5, by=0.025)
@@ -106,23 +102,19 @@ data_plot_sims %>%
 		geom_segment(aes(x=0, y=0, xend=max(true.prev), yend=max(true.prev)*data_plot_sims_points$ratio[4]), colour=colors_for_scenarios[4], size=0.7) +
 		geom_point(aes(x=true.prev, y=measured.prev, group=which_scenario, shape=which_scenario), size=1.5) +
 		xlab("True prevalence") +
-		ylab("Measured prevalence") +
-		theme_bw() +
+		ylab("Estimated prevalence") +
+		theme_bw(base_size=16) +
 		guides(shape=guide_legend(override.aes=list(size=2))) +
 		labs(shape="Validation\nset used for\ncorrection") +
-		annotate(geom="text", x=0.0, y=0.5, label=paste0("Se in severe: ", sprintf(Se.severe, fmt='%#.2f')), size=4, hjust=0) +
-		annotate(geom="text", x=0.0, y=0.475, label=paste0("Se in mild: ", sprintf(Se.mild, fmt='%#.2f')), size=4, hjust=0) +
-		annotate(geom="text", x=0.0, y=0.45, label=paste0("Se in asymptomatic: ", sprintf(Se.asx, fmt='%#.2f')), size=4, hjust=0) +
+		annotate(geom="text", x=0.5, y=0.062, label=paste0("Se in severe: ", sprintf(Se.severe, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
+		annotate(geom="text", x=0.5, y=0.031, label=paste0("Se in mild: ", sprintf(Se.mild, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
+		annotate(geom="text", x=0.5, y=0, label=paste0("Se in asymptomatic: ", sprintf(Se.asx, fmt='%#.2f')), size=4.5, hjust=1, vjust=0) +
 		scale_shape_manual(values=c(16,15,17,3)) +
 		theme(
 			aspect.ratio=1,
 			legend.position="top",
 			legend.title.align=0.5,
-			panel.grid.minor=element_blank(),
-			axis.text=element_text(size=12),
-			axis.title=element_text(size=12),
-			legend.text=element_text(size=12),
-			legend.title=element_text(size=12)) -> plot_sims
+			panel.grid.minor=element_blank()) -> plot_sims
 
 ## [3] Sweep over sensitivity in asx/mild for each scenario (fixing Se in severe to Se.severe)
 true.prev.fixed <- 0.5 ## Doesn't matter what this is for calculating ratios
@@ -182,23 +174,21 @@ data_plot_sweep %>%
 		geom_point(aes(x=as.numeric(Se.mild_to_sweep), y=as.numeric(ratio), group=which_scenario, shape=which_scenario), size=1.5) +
 		geom_point(data=data_plot_sweep_single, aes(x=Se.mild_to_sweep, y=ratio, colour=color), shape=1, size=4, stroke=1.2) +
 		xlab("Sensitivity in mild") +
-		ylab("Ratio, measured to true prevalence") +
-		theme_bw() +
+		ylab("Ratio, estimated to true prevalence") +
+		theme_bw(base_size=16) +
 		scale_x_continuous(breaks=seq(0.2,1,by=0.1), limits=c(0.2,1.001)) +
 		scale_y_continuous(breaks=seq(0.2,1,by=0.1), limits=c(0.2,1.001)) +
 		scale_shape_manual(values=c(16,15,17)) +
 		scale_colour_identity(breaks=data_plot_sweep_single$color) +
-		annotate(geom="text", x=0.7, y=0.35, label=paste0("Se in severe: ", Se.severe), size=4) +
-		annotate(geom="text", x=0.7, y=0.30, label=paste0("Se in asymptomatic: Se in mild x ", MASS::fractions(Se_asx_to_Se_mild_ratio)), size=4) +
+		annotate(geom="text", x=1, y=0.25, label=paste0("Se in severe: ", Se.severe), size=4.5, hjust=1, vjust=0) +
+		annotate(geom="text", x=1, y=0.20, label=paste0("Se in asymptomatic: Se in mild x ", MASS::fractions(Se_asx_to_Se_mild_ratio)), size=4.5, hjust=1, vjust=0) +
 		guides(shape=guide_legend(ncol=2, override.aes=list(size=2))) +
 		theme(
 			aspect.ratio=1,
 			legend.position="none",
-			panel.grid.minor=element_blank(),
-			axis.text=element_text(size=12),
-			axis.title=element_text(size=12)) -> plot_sweep
+			panel.grid.minor=element_blank()) -> plot_sweep
 
 ## Plot them together
-plot_all_main <- plot_scenarios + plot_sims + plot_sweep + plot_layout(ncol=3) + plot_annotation(tag_levels='A')
+plot_all_main <- plot_scenarios + plot_sims + plot_sweep + plot_layout(ncol=3) + plot_annotation(tag_levels='A', theme=theme(plot.title=element_text(size=20)))
 
 # ggsave("main_figure.pdf", plot_all_main, width=35, height=20, units="cm")
