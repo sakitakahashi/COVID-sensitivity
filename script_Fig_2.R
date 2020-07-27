@@ -244,6 +244,6 @@ data_plot_sims_TSI %>%
 			panel.grid.minor=element_blank()) -> plot_sims_TSI
 
 ## Plot them together
-plot_all_supplementary <- plot_SEIR + plot_scenarios_TSI + plot_sims_TSI + plot_layout(ncol=3) + plot_annotation(tag_levels='A', theme=theme(plot.title=element_text(size=20)))
+plot_all_fig_2 <- plot_SEIR + plot_scenarios_TSI + plot_sims_TSI + plot_layout(ncol=3) + plot_annotation(tag_levels='A', theme=theme(plot.title=element_text(size=20)))
 
-# ggsave(paste0("fig_2.pdf"), plot_all_supplementary, width=35, height=20, units="cm")
+# ggsave(paste0("fig_2.pdf"), plot_all_fig_2, width=35, height=20, units="cm")
