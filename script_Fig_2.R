@@ -45,23 +45,23 @@ lsoda(y=c(S=N_fix-1, E=0, I=1, R=0, C=0), times=seq(from=0, to=365, by=1), func=
 ## Pick times to highlight, systematically
 SEIR.output %>%
 	mutate(new_cases=C-lag(C, default=0)) %>%
-	mutate(new_cases_round = ceiling(new_cases)) -> SEIR.output_2
+	mutate(new_cases_round = round(new_cases)) -> SEIR.output_2
 
-TSI <- rep(SEIR.output_2$time, times=SEIR.output_2$new_cases_round)
+infs_on_epidate <- rep(SEIR.output_2$time, times=SEIR.output_2$new_cases_round)
 
 ## Get TSI for Scenario 1 (day 60)
 N1 <- 60
-N1-TSI[TSI<=N1] %>% quantile(probs=seq(0,1,by=0.01)) -> TSI_1
+N1-infs_on_epidate[infs_on_epidate<=N1] -> TSI_1
 ecdf_TSI_1 <- ecdf(TSI_1)
 
 ## Get TSI for Scenario 2 (day 180)
 N2 <- 180
-N2-TSI[TSI<=N2] %>% quantile(probs=seq(0,1,by=0.01)) -> TSI_2
+N2-infs_on_epidate[infs_on_epidate<=N2] -> TSI_2
 ecdf_TSI_2 <- ecdf(TSI_2)
 
 ## Get TSI for Scenario 3 (day 300)
 N3 <- 300
-N3-TSI[TSI<=N3] %>% quantile(probs=seq(0,1,by=0.01)) -> TSI_3
+N3-infs_on_epidate[infs_on_epidate<=N3] -> TSI_3
 ecdf_TSI_3 <- ecdf(TSI_3)
 
 SEIR.output %>%
